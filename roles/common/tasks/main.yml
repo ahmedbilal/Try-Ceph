@@ -24,6 +24,12 @@
 - name: Importing EPEL GPG  key
   command: rpm --import /tmp/epel-key
 
+- name: Correct metalink repo
+  command: sed -i "s/mirrorlist=https/mirrorlist=http/" /etc/yum.repos.d/epel.repo
+
+- name: Updating some packages
+  command: yum update -y nss curl libcurl
+
 - name: Adding EPEL repo
   command: yum -y install epel-release
 
@@ -51,6 +57,9 @@
 
 - name: Creating directories required by ceph [/etc/ceph]
   file: dest=/etc/ceph state=directory
+
+- name: Update CA Certificates
+  command: yum --disablerepo=epel -y update  ca-certificates
 
 - name: Installing Ceph packages
   yum: name=ceph state=present enablerepo=ceph
